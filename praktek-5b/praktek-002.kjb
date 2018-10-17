@@ -313,7 +313,7 @@
       <type>MSGBOX_INFO</type>
       <bodymessage>Selamat Datang ${nama}, 
 Dengan umur ${usia} semoga sanggup belajar Data Warehous.</bodymessage>
-      <titremessage>Informasi untuk ${Nama}</titremessage>
+      <titremessage>Informasi untuk ${nama}</titremessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
