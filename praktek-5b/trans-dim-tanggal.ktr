@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>dim-staf</name>
+    <name>trans-dim-tanggal</name>
     <description />
     <extended_description />
     <trans_version />
@@ -427,20 +427,20 @@
     <clusterschemas>
     </clusterschemas>
     <created_user>-</created_user>
-    <created_date>2018/10/22 14:48:49.134</created_date>
+    <created_date>2018/10/30 16:09:29.086</created_date>
     <modified_user>-</modified_user>
-    <modified_date>2018/10/22 14:48:49.134</modified_date>
-    <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA=</key_for_session_key>
+    <modified_date>2018/10/30 16:09:29.086</modified_date>
+    <key_for_session_key />
     <is_key_private>N</is_key_private>
   </info>
   <notepads>
   </notepads>
   <connection>
-    <name>olap-postgre</name>
+    <name>data-warehouse</name>
     <server>localhost</server>
     <type>POSTGRESQL</type>
     <access>Native</access>
-    <database>kelas5a</database>
+    <database>kelas5b</database>
     <port>5432</port>
     <username>dev</username>
     <password>Encrypted 2be98afc86aa7f2e4cb0baf78df81a6db</password>
@@ -486,80 +486,385 @@
       </attribute>
     </attributes>
   </connection>
-  <connection>
-    <name>oltp-dvd-rental</name>
-    <server>localhost</server>
-    <type>MYSQL</type>
-    <access>Native</access>
-    <database>sakila</database>
-    <port>3306</port>
-    <username>root</username>
-    <password>Encrypted 2be98afc86aa7f2e4cb0baf78df81a6db</password>
-    <servername />
-    <data_tablespace />
-    <index_tablespace />
-    <attributes>
-      <attribute>
-        <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
-        <attribute>N</attribute>
-      </attribute>
-      <attribute>
-        <code>FORCE_IDENTIFIERS_TO_UPPERCASE</code>
-        <attribute>N</attribute>
-      </attribute>
-      <attribute>
-        <code>IS_CLUSTERED</code>
-        <attribute>N</attribute>
-      </attribute>
-      <attribute>
-        <code>PORT_NUMBER</code>
-        <attribute>3306</attribute>
-      </attribute>
-      <attribute>
-        <code>PRESERVE_RESERVED_WORD_CASE</code>
-        <attribute>Y</attribute>
-      </attribute>
-      <attribute>
-        <code>QUOTE_ALL_FIELDS</code>
-        <attribute>N</attribute>
-      </attribute>
-      <attribute>
-        <code>STREAM_RESULTS</code>
-        <attribute>Y</attribute>
-      </attribute>
-      <attribute>
-        <code>SUPPORTS_BOOLEAN_DATA_TYPE</code>
-        <attribute>Y</attribute>
-      </attribute>
-      <attribute>
-        <code>SUPPORTS_TIMESTAMP_DATA_TYPE</code>
-        <attribute>Y</attribute>
-      </attribute>
-      <attribute>
-        <code>USE_POOLING</code>
-        <attribute>N</attribute>
-      </attribute>
-    </attributes>
-  </connection>
   <order>
     <hop>
-      <from>Table input</from>
-      <to>Modified Java Script Value</to>
+      <from>generate tanggal awal</from>
+      <to>sequence-hari</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Modified Java Script Value</from>
-      <to>Add sequence</to>
+      <from>sequence-hari</from>
+      <to>Calculator</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Add sequence</from>
+      <from>Calculator</from>
+      <to>generate nama bulan</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>kamus-bulan</from>
+      <to>generate nama bulan</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>generate nama bulan</from>
+      <to>generate sk</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>generate sk</from>
       <to>Insert / Update</to>
       <enabled>Y</enabled>
     </hop>
   </order>
   <step>
-    <name>Add sequence</name>
+    <name>generate tanggal awal</name>
+    <type>RowGenerator</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <fields>
+      <field>
+        <name>tgl_awal</name>
+        <type>Date</type>
+        <format>yyyy/MM/dd</format>
+        <currency />
+        <decimal />
+        <group />
+        <nullif>2005/01/01</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <limit>1000</limit>
+    <never_ending>N</never_ending>
+    <interval_in_ms>5000</interval_in_ms>
+    <row_time_field>now</row_time_field>
+    <last_time_field>FiveSecondsAgo</last_time_field>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>64</xloc>
+      <yloc>48</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>sequence-hari</name>
+    <type>Sequence</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <valuename>urutan-hari</valuename>
+    <use_database>N</use_database>
+    <connection />
+    <schema />
+    <seqname>SEQ_</seqname>
+    <use_counter>Y</use_counter>
+    <counter_name />
+    <start_at>0</start_at>
+    <increment_by>1</increment_by>
+    <max_value>999999999</max_value>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>224</xloc>
+      <yloc>48</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Calculator</name>
+    <type>Calculator</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <calculation>
+      <field_name>tgl</field_name>
+      <calc_type>ADD_DAYS</calc_type>
+      <field_a>tgl_awal</field_a>
+      <field_b>urutan-hari</field_b>
+      <field_c />
+      <value_type>Date</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask />
+      <decimal_symbol />
+      <grouping_symbol />
+      <currency_symbol />
+    </calculation>
+    <calculation>
+      <field_name>thn</field_name>
+      <calc_type>YEAR_OF_DATE</calc_type>
+      <field_a>tgl</field_a>
+      <field_b />
+      <field_c />
+      <value_type>Integer</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask />
+      <decimal_symbol />
+      <grouping_symbol />
+      <currency_symbol />
+    </calculation>
+    <calculation>
+      <field_name>triwulan_huruf</field_name>
+      <calc_type>CONSTANT</calc_type>
+      <field_a>T</field_a>
+      <field_b />
+      <field_c />
+      <value_type>String</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask />
+      <decimal_symbol />
+      <grouping_symbol />
+      <currency_symbol />
+    </calculation>
+    <calculation>
+      <field_name>triwulan_angka</field_name>
+      <calc_type>QUARTER_OF_DATE</calc_type>
+      <field_a>tgl</field_a>
+      <field_b />
+      <field_c />
+      <value_type>String</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask />
+      <decimal_symbol />
+      <grouping_symbol />
+      <currency_symbol />
+    </calculation>
+    <calculation>
+      <field_name>triwulan</field_name>
+      <calc_type>ADD</calc_type>
+      <field_a>triwulan_huruf</field_a>
+      <field_b>triwulan_angka</field_b>
+      <field_c />
+      <value_type>String</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask />
+      <decimal_symbol />
+      <grouping_symbol />
+      <currency_symbol />
+    </calculation>
+    <calculation>
+      <field_name>bln</field_name>
+      <calc_type>MONTH_OF_DATE</calc_type>
+      <field_a>tgl</field_a>
+      <field_b />
+      <field_c />
+      <value_type>Integer</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask />
+      <decimal_symbol />
+      <grouping_symbol />
+      <currency_symbol />
+    </calculation>
+    <calculation>
+      <field_name>hari</field_name>
+      <calc_type>DAY_OF_MONTH</calc_type>
+      <field_a>tgl</field_a>
+      <field_b />
+      <field_c />
+      <value_type>Integer</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask />
+      <decimal_symbol />
+      <grouping_symbol />
+      <currency_symbol />
+    </calculation>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>368</xloc>
+      <yloc>48</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>kamus-bulan</name>
+    <type>DataGrid</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <fields>
+      <field>
+        <name>bln_digit</name>
+        <type>Integer</type>
+        <format />
+        <currency />
+        <decimal />
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+      <field>
+        <name>bln_nama</name>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal />
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <data>
+      <line>
+        <item>1</item>
+        <item>JANUARI</item>
+      </line>
+      <line>
+        <item>2</item>
+        <item>FEBRUARI</item>
+      </line>
+      <line>
+        <item>3</item>
+        <item>MARET</item>
+      </line>
+      <line>
+        <item>4</item>
+        <item>APRIL</item>
+      </line>
+      <line>
+        <item>5</item>
+        <item>MEI</item>
+      </line>
+      <line>
+        <item>6</item>
+        <item>JUNI</item>
+      </line>
+      <line>
+        <item>7</item>
+        <item>JULI</item>
+      </line>
+      <line>
+        <item>8</item>
+        <item>AGUSTUS</item>
+      </line>
+      <line>
+        <item>9</item>
+        <item>SEPTEMBER</item>
+      </line>
+      <line>
+        <item>10</item>
+        <item>OKTOBER</item>
+      </line>
+      <line>
+        <item>11</item>
+        <item>NOVEMBER</item>
+      </line>
+      <line>
+        <item>12</item>
+        <item>DESEMBER</item>
+      </line>
+    </data>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>528</xloc>
+      <yloc>48</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>generate nama bulan</name>
+    <type>StreamLookup</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <from>kamus-bulan</from>
+    <input_sorted>N</input_sorted>
+    <preserve_memory>Y</preserve_memory>
+    <sorted_list>N</sorted_list>
+    <integer_pair>N</integer_pair>
+    <lookup>
+      <key>
+        <name>bln</name>
+        <field>bln_digit</field>
+      </key>
+      <value>
+        <name>bln_nama</name>
+        <rename>bln_nama</rename>
+        <default />
+        <type>String</type>
+      </value>
+    </lookup>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>432</xloc>
+      <yloc>176</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>generate sk</name>
     <type>Sequence</type>
     <description />
     <distribute>Y</distribute>
@@ -571,7 +876,7 @@
     </partitioning>
     <valuename>sk</valuename>
     <use_database>N</use_database>
-    <connection>oltp-dvd-rental</connection>
+    <connection />
     <schema />
     <seqname>SEQ_</seqname>
     <use_counter>Y</use_counter>
@@ -587,8 +892,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>448</xloc>
-      <yloc>48</yloc>
+      <xloc>272</xloc>
+      <yloc>176</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -603,12 +908,12 @@
       <method>none</method>
       <schema_name />
     </partitioning>
-    <connection>olap-postgre</connection>
+    <connection>data-warehouse</connection>
     <commit>100</commit>
     <update_bypassed>N</update_bypassed>
     <lookup>
       <schema />
-      <table>dim_staf</table>
+      <table>dim_tanggal</table>
       <key>
         <name>sk</name>
         <field>sk</field>
@@ -616,23 +921,33 @@
         <name2 />
       </key>
       <value>
-        <name>staf_id</name>
-        <rename>staff_id</rename>
+        <name>tanggal</name>
+        <rename>tgl</rename>
         <update>Y</update>
       </value>
       <value>
-        <name>email</name>
-        <rename>email</rename>
+        <name>tahun</name>
+        <rename>thn</rename>
         <update>Y</update>
       </value>
       <value>
-        <name>username</name>
-        <rename>username</rename>
+        <name>triwulan</name>
+        <rename>triwulan</rename>
         <update>Y</update>
       </value>
       <value>
-        <name>nama</name>
-        <rename>nama</rename>
+        <name>bulan</name>
+        <rename>bln</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>hari</name>
+        <rename>hari</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>nama_bulan</name>
+        <rename>bln_nama</rename>
         <update>Y</update>
       </value>
       <value>
@@ -649,91 +964,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>240</xloc>
+      <xloc>112</xloc>
       <yloc>176</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Modified Java Script Value</name>
-    <type>ScriptValueMod</type>
-    <description />
-    <distribute>Y</distribute>
-    <custom_distribution />
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name />
-    </partitioning>
-    <compatible>N</compatible>
-    <optimizationLevel>9</optimizationLevel>
-    <jsScripts>
-      <jsScript>
-        <jsScript_type>0</jsScript_type>
-        <jsScript_name>Script 1</jsScript_name>
-        <jsScript_script>//Script here
-nama = first_name + ' ' + last_name
-</jsScript_script>
-      </jsScript>
-    </jsScripts>
-    <fields>
-      <field>
-        <name>nama</name>
-        <rename>nama</rename>
-        <type>String</type>
-        <length>-1</length>
-        <precision>-1</precision>
-        <replace>N</replace>
-      </field>
-    </fields>
-    <cluster_schema />
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>248</xloc>
-      <yloc>48</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Table input</name>
-    <type>TableInput</type>
-    <description />
-    <distribute>Y</distribute>
-    <custom_distribution />
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name />
-    </partitioning>
-    <connection>oltp-dvd-rental</connection>
-    <sql>SELECT
-  staff_id
-, first_name
-, last_name 
-, email
-, username
-FROM staff
-</sql>
-    <limit>0</limit>
-    <lookup />
-    <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
-    <cluster_schema />
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>48</xloc>
-      <yloc>48</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

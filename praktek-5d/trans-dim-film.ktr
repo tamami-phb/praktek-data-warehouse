@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>dim-staf</name>
+    <name>trans-dim-film</name>
     <description />
     <extended_description />
     <trans_version />
@@ -427,20 +427,20 @@
     <clusterschemas>
     </clusterschemas>
     <created_user>-</created_user>
-    <created_date>2018/10/22 14:48:49.134</created_date>
+    <created_date>2018/10/30 13:46:05.722</created_date>
     <modified_user>-</modified_user>
-    <modified_date>2018/10/22 14:48:49.134</modified_date>
-    <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA=</key_for_session_key>
+    <modified_date>2018/10/30 13:46:05.722</modified_date>
+    <key_for_session_key />
     <is_key_private>N</is_key_private>
   </info>
   <notepads>
   </notepads>
   <connection>
-    <name>olap-postgre</name>
+    <name>data-warehouse</name>
     <server>localhost</server>
     <type>POSTGRESQL</type>
     <access>Native</access>
-    <database>kelas5a</database>
+    <database>kelas5d</database>
     <port>5432</port>
     <username>dev</username>
     <password>Encrypted 2be98afc86aa7f2e4cb0baf78df81a6db</password>
@@ -487,13 +487,13 @@
     </attributes>
   </connection>
   <connection>
-    <name>oltp-dvd-rental</name>
+    <name>oltp-postgres</name>
     <server>localhost</server>
-    <type>MYSQL</type>
+    <type>POSTGRESQL</type>
     <access>Native</access>
-    <database>sakila</database>
-    <port>3306</port>
-    <username>root</username>
+    <database>oltp-kelas5c</database>
+    <port>5432</port>
+    <username>dev</username>
     <password>Encrypted 2be98afc86aa7f2e4cb0baf78df81a6db</password>
     <servername />
     <data_tablespace />
@@ -513,7 +513,7 @@
       </attribute>
       <attribute>
         <code>PORT_NUMBER</code>
-        <attribute>3306</attribute>
+        <attribute>5432</attribute>
       </attribute>
       <attribute>
         <code>PRESERVE_RESERVED_WORD_CASE</code>
@@ -522,10 +522,6 @@
       <attribute>
         <code>QUOTE_ALL_FIELDS</code>
         <attribute>N</attribute>
-      </attribute>
-      <attribute>
-        <code>STREAM_RESULTS</code>
-        <attribute>Y</attribute>
       </attribute>
       <attribute>
         <code>SUPPORTS_BOOLEAN_DATA_TYPE</code>
@@ -543,23 +539,76 @@
   </connection>
   <order>
     <hop>
-      <from>Table input</from>
-      <to>Modified Java Script Value</to>
+      <from>table film</from>
+      <to>generate surrogate-key</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Modified Java Script Value</from>
-      <to>Add sequence</to>
+      <from>generate surrogate-key</from>
+      <to>gabungkan nama aktor</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Add sequence</from>
+      <from>gabungkan nama aktor</from>
       <to>Insert / Update</to>
       <enabled>Y</enabled>
     </hop>
   </order>
   <step>
-    <name>Add sequence</name>
+    <name>table film</name>
+    <type>TableInput</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <connection>oltp-postgres</connection>
+    <sql>SELECT 
+  film.film_id,
+  film.title,
+  film.release_year,
+  film.rental_duration,
+  film.rating,
+  actor.first_name,
+  actor.last_name, 
+  category.name
+FROM film
+join film_actor on (
+  film_actor.film_id = film.film_id
+)
+join actor on (
+  actor.actor_id = film_actor.actor_id
+)
+join film_category on (
+  film_category.film_id = film.film_id
+)
+join category on (
+  category.category_id = film_category.category_id
+)
+</sql>
+    <limit>0</limit>
+    <lookup />
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>48</xloc>
+      <yloc>32</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>generate surrogate-key</name>
     <type>Sequence</type>
     <description />
     <distribute>Y</distribute>
@@ -571,7 +620,7 @@
     </partitioning>
     <valuename>sk</valuename>
     <use_database>N</use_database>
-    <connection>oltp-dvd-rental</connection>
+    <connection />
     <schema />
     <seqname>SEQ_</seqname>
     <use_counter>Y</use_counter>
@@ -587,75 +636,13 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>448</xloc>
-      <yloc>48</yloc>
+      <xloc>248</xloc>
+      <yloc>32</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Insert / Update</name>
-    <type>InsertUpdate</type>
-    <description />
-    <distribute>Y</distribute>
-    <custom_distribution />
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name />
-    </partitioning>
-    <connection>olap-postgre</connection>
-    <commit>100</commit>
-    <update_bypassed>N</update_bypassed>
-    <lookup>
-      <schema />
-      <table>dim_staf</table>
-      <key>
-        <name>sk</name>
-        <field>sk</field>
-        <condition>=</condition>
-        <name2 />
-      </key>
-      <value>
-        <name>staf_id</name>
-        <rename>staff_id</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>email</name>
-        <rename>email</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>username</name>
-        <rename>username</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>nama</name>
-        <rename>nama</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>sk</name>
-        <rename>sk</rename>
-        <update>Y</update>
-      </value>
-    </lookup>
-    <cluster_schema />
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>240</xloc>
-      <yloc>176</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Modified Java Script Value</name>
+    <name>gabungkan nama aktor</name>
     <type>ScriptValueMod</type>
     <description />
     <distribute>Y</distribute>
@@ -672,14 +659,14 @@
         <jsScript_type>0</jsScript_type>
         <jsScript_name>Script 1</jsScript_name>
         <jsScript_script>//Script here
-nama = first_name + ' ' + last_name
-</jsScript_script>
+
+var nama_aktor = first_name + ' ' + last_name</jsScript_script>
       </jsScript>
     </jsScripts>
     <fields>
       <field>
-        <name>nama</name>
-        <rename>nama</rename>
+        <name>nama_aktor</name>
+        <rename>nama_aktor</rename>
         <type>String</type>
         <length>-1</length>
         <precision>-1</precision>
@@ -694,14 +681,14 @@ nama = first_name + ' ' + last_name
       </output>
     </remotesteps>
     <GUI>
-      <xloc>248</xloc>
-      <yloc>48</yloc>
+      <xloc>448</xloc>
+      <yloc>32</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Table input</name>
-    <type>TableInput</type>
+    <name>Insert / Update</name>
+    <type>InsertUpdate</type>
     <description />
     <distribute>Y</distribute>
     <custom_distribution />
@@ -710,20 +697,59 @@ nama = first_name + ' ' + last_name
       <method>none</method>
       <schema_name />
     </partitioning>
-    <connection>oltp-dvd-rental</connection>
-    <sql>SELECT
-  staff_id
-, first_name
-, last_name 
-, email
-, username
-FROM staff
-</sql>
-    <limit>0</limit>
-    <lookup />
-    <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
+    <connection>data-warehouse</connection>
+    <commit>100</commit>
+    <update_bypassed>N</update_bypassed>
+    <lookup>
+      <schema />
+      <table>dim_film</table>
+      <key>
+        <name>sk</name>
+        <field>sk</field>
+        <condition>=</condition>
+        <name2 />
+      </key>
+      <value>
+        <name>film_id</name>
+        <rename>film_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>judul</name>
+        <rename>title</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>tahun_terbit</name>
+        <rename>release_year</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>durasi_pinjam</name>
+        <rename>rental_duration</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>rating</name>
+        <rename>rating</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>sk</name>
+        <rename>sk</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>nama_aktor</name>
+        <rename>nama_aktor</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>kategori</name>
+        <rename>name</rename>
+        <update>Y</update>
+      </value>
+    </lookup>
     <cluster_schema />
     <remotesteps>
       <input>
@@ -732,8 +758,8 @@ FROM staff
       </output>
     </remotesteps>
     <GUI>
-      <xloc>48</xloc>
-      <yloc>48</yloc>
+      <xloc>448</xloc>
+      <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
