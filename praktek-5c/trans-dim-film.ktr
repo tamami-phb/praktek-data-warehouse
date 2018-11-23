@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>trans-dim-tanggal</name>
+    <name>trans-dim-film</name>
     <description />
     <extended_description />
     <trans_version />
@@ -427,16 +427,16 @@
     <clusterschemas>
     </clusterschemas>
     <created_user>-</created_user>
-    <created_date>2018/10/31 13:34:39.130</created_date>
+    <created_date>2018/11/01 15:50:36.510</created_date>
     <modified_user>-</modified_user>
-    <modified_date>2018/10/31 13:34:39.130</modified_date>
-    <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA=</key_for_session_key>
+    <modified_date>2018/11/01 15:50:36.510</modified_date>
+    <key_for_session_key />
     <is_key_private>N</is_key_private>
   </info>
   <notepads>
   </notepads>
   <connection>
-    <name>data-warehouse</name>
+    <name>olap-postgres</name>
     <server>localhost</server>
     <type>POSTGRESQL</type>
     <access>Native</access>
@@ -486,41 +486,82 @@
       </attribute>
     </attributes>
   </connection>
+  <connection>
+    <name>oltp-maria</name>
+    <server>localhost</server>
+    <type>MARIADB</type>
+    <access>Native</access>
+    <database>sakila</database>
+    <port>3306</port>
+    <username>root</username>
+    <password>Encrypted 2be98afc86aa7f2e4cb0baf78df81a6db</password>
+    <servername />
+    <data_tablespace />
+    <index_tablespace />
+    <attributes>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_UPPERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>IS_CLUSTERED</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>PORT_NUMBER</code>
+        <attribute>3306</attribute>
+      </attribute>
+      <attribute>
+        <code>PRESERVE_RESERVED_WORD_CASE</code>
+        <attribute>Y</attribute>
+      </attribute>
+      <attribute>
+        <code>QUOTE_ALL_FIELDS</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>SUPPORTS_BOOLEAN_DATA_TYPE</code>
+        <attribute>Y</attribute>
+      </attribute>
+      <attribute>
+        <code>SUPPORTS_TIMESTAMP_DATA_TYPE</code>
+        <attribute>Y</attribute>
+      </attribute>
+      <attribute>
+        <code>USE_POOLING</code>
+        <attribute>N</attribute>
+      </attribute>
+    </attributes>
+  </connection>
   <order>
     <hop>
-      <from>generate tgl_awal</from>
-      <to>counter hari</to>
+      <from>get data film</from>
+      <to>ubah name -> kategori</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>counter hari</from>
-      <to>Calculator</to>
+      <from>ubah name -> kategori</from>
+      <to>gabung nama</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Calculator</from>
-      <to>generate nama bulan</to>
+      <from>gabung nama</from>
+      <to>generate sk</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>kamus-bulan</from>
-      <to>generate nama bulan</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>generate nama bulan</from>
-      <to>gen sk</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>gen sk</from>
+      <from>generate sk</from>
       <to>Insert / Update</to>
       <enabled>Y</enabled>
     </hop>
   </order>
   <step>
-    <name>Calculator</name>
-    <type>Calculator</type>
+    <name>get data film</name>
+    <type>TableInput</type>
     <description />
     <distribute>Y</distribute>
     <custom_distribution />
@@ -529,301 +570,35 @@
       <method>none</method>
       <schema_name />
     </partitioning>
-    <calculation>
-      <field_name>tgl</field_name>
-      <calc_type>ADD_DAYS</calc_type>
-      <field_a>tgl_awal</field_a>
-      <field_b>counter-hari</field_b>
-      <field_c />
-      <value_type>Date</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <remove>N</remove>
-      <conversion_mask />
-      <decimal_symbol />
-      <grouping_symbol />
-      <currency_symbol />
-    </calculation>
-    <calculation>
-      <field_name>thn</field_name>
-      <calc_type>YEAR_OF_DATE</calc_type>
-      <field_a>tgl</field_a>
-      <field_b />
-      <field_c />
-      <value_type>Integer</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <remove>N</remove>
-      <conversion_mask />
-      <decimal_symbol />
-      <grouping_symbol />
-      <currency_symbol />
-    </calculation>
-    <calculation>
-      <field_name>triwulan_huruf</field_name>
-      <calc_type>CONSTANT</calc_type>
-      <field_a>T</field_a>
-      <field_b />
-      <field_c />
-      <value_type>String</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <remove>N</remove>
-      <conversion_mask />
-      <decimal_symbol />
-      <grouping_symbol />
-      <currency_symbol />
-    </calculation>
-    <calculation>
-      <field_name>triwulan_angka</field_name>
-      <calc_type>QUARTER_OF_DATE</calc_type>
-      <field_a>tgl</field_a>
-      <field_b />
-      <field_c />
-      <value_type>String</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <remove>N</remove>
-      <conversion_mask />
-      <decimal_symbol />
-      <grouping_symbol />
-      <currency_symbol />
-    </calculation>
-    <calculation>
-      <field_name>triwulan</field_name>
-      <calc_type>ADD</calc_type>
-      <field_a>triwulan_huruf</field_a>
-      <field_b>triwulan_angka</field_b>
-      <field_c />
-      <value_type>String</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <remove>N</remove>
-      <conversion_mask />
-      <decimal_symbol />
-      <grouping_symbol />
-      <currency_symbol />
-    </calculation>
-    <calculation>
-      <field_name>bln</field_name>
-      <calc_type>MONTH_OF_DATE</calc_type>
-      <field_a>tgl</field_a>
-      <field_b />
-      <field_c />
-      <value_type>Integer</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <remove>N</remove>
-      <conversion_mask />
-      <decimal_symbol />
-      <grouping_symbol />
-      <currency_symbol />
-    </calculation>
-    <calculation>
-      <field_name>hari</field_name>
-      <calc_type>DAY_OF_MONTH</calc_type>
-      <field_a>tgl</field_a>
-      <field_b />
-      <field_c />
-      <value_type>Integer</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <remove>N</remove>
-      <conversion_mask />
-      <decimal_symbol />
-      <grouping_symbol />
-      <currency_symbol />
-    </calculation>
-    <cluster_schema />
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>336</xloc>
-      <yloc>48</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Insert / Update</name>
-    <type>InsertUpdate</type>
-    <description />
-    <distribute>Y</distribute>
-    <custom_distribution />
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name />
-    </partitioning>
-    <connection>data-warehouse</connection>
-    <commit>100</commit>
-    <update_bypassed>N</update_bypassed>
-    <lookup>
-      <schema />
-      <table>dim_waktu</table>
-      <key>
-        <name>sk</name>
-        <field>sk</field>
-        <condition>=</condition>
-        <name2 />
-      </key>
-      <value>
-        <name>tanggal</name>
-        <rename>tgl</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>tahun</name>
-        <rename>thn</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>triwulan</name>
-        <rename>triwulan</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>bulan</name>
-        <rename>bln</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>hari</name>
-        <rename>hari</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>nama_bulan</name>
-        <rename>bln_huruf</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>sk</name>
-        <rename>sk</rename>
-        <update>Y</update>
-      </value>
-    </lookup>
-    <cluster_schema />
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>144</xloc>
-      <yloc>272</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>counter hari</name>
-    <type>Sequence</type>
-    <description />
-    <distribute>Y</distribute>
-    <custom_distribution />
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name />
-    </partitioning>
-    <valuename>counter-hari</valuename>
-    <use_database>N</use_database>
-    <connection />
-    <schema />
-    <seqname>SEQ_</seqname>
-    <use_counter>Y</use_counter>
-    <counter_name />
-    <start_at>0</start_at>
-    <increment_by>1</increment_by>
-    <max_value>999999999</max_value>
-    <cluster_schema />
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>208</xloc>
-      <yloc>48</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>generate nama bulan</name>
-    <type>StreamLookup</type>
-    <description />
-    <distribute>Y</distribute>
-    <custom_distribution />
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name />
-    </partitioning>
-    <from>kamus-bulan</from>
-    <input_sorted>N</input_sorted>
-    <preserve_memory>Y</preserve_memory>
-    <sorted_list>N</sorted_list>
-    <integer_pair>N</integer_pair>
-    <lookup>
-      <key>
-        <name>bln</name>
-        <field>bln_angka</field>
-      </key>
-      <value>
-        <name>bln_huruf</name>
-        <rename>bln_huruf</rename>
-        <default />
-        <type>String</type>
-      </value>
-    </lookup>
-    <cluster_schema />
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>400</xloc>
-      <yloc>160</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>generate tgl_awal</name>
-    <type>RowGenerator</type>
-    <description />
-    <distribute>Y</distribute>
-    <custom_distribution />
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name />
-    </partitioning>
-    <fields>
-      <field>
-        <name>tgl_awal</name>
-        <type>Date</type>
-        <format>yyyy/MM/dd</format>
-        <currency />
-        <decimal />
-        <group />
-        <nullif>2005/01/01</nullif>
-        <length>-1</length>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-      </field>
-    </fields>
-    <limit>2000</limit>
-    <never_ending>N</never_ending>
-    <interval_in_ms>5000</interval_in_ms>
-    <row_time_field>now</row_time_field>
-    <last_time_field>FiveSecondsAgo</last_time_field>
+    <connection>oltp-maria</connection>
+    <sql>SELECT
+  film.film_id
+, film.title
+, film.release_year
+, film.rental_duration
+, film.rating
+, act.first_name
+, act.last_name
+, cat.name AS kategori
+FROM film
+join film_actor fa on (
+	fa.film_id = film.film_id
+)
+join actor act on (
+	act.actor_id = fa.actor_id
+)
+join film_category fc on (
+	fc.film_id = film.film_id
+)
+join category cat on (
+	cat.category_id = fc.category_id
+)
+</sql>
+    <limit>0</limit>
+    <lookup />
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
     <cluster_schema />
     <remotesteps>
       <input>
@@ -838,8 +613,8 @@
     </GUI>
   </step>
   <step>
-    <name>kamus-bulan</name>
-    <type>DataGrid</type>
+    <name>ubah name -> kategori</name>
+    <type>SelectValues</type>
     <description />
     <distribute>Y</distribute>
     <custom_distribution />
@@ -849,79 +624,25 @@
       <schema_name />
     </partitioning>
     <fields>
-      <field>
-        <name>bln_angka</name>
-        <type>Integer</type>
-        <format />
-        <currency />
-        <decimal />
-        <group />
-        <length>-1</length>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-      </field>
-      <field>
-        <name>bln_huruf</name>
-        <type>String</type>
-        <format />
-        <currency />
-        <decimal />
-        <group />
-        <length>-1</length>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-      </field>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>name</name>
+        <rename>kategori</rename>
+        <type>None</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask />
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale />
+        <date_format_timezone />
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding />
+        <decimal_symbol />
+        <grouping_symbol />
+        <currency_symbol />
+        <storage_type />
+      </meta>
     </fields>
-    <data>
-      <line>
-        <item>1</item>
-        <item>JANUARI</item>
-      </line>
-      <line>
-        <item>2</item>
-        <item>FEBRUARI</item>
-      </line>
-      <line>
-        <item>3</item>
-        <item>MARET</item>
-      </line>
-      <line>
-        <item>4</item>
-        <item>APRIL</item>
-      </line>
-      <line>
-        <item>5</item>
-        <item>MEI</item>
-      </line>
-      <line>
-        <item>6</item>
-        <item>JUNI</item>
-      </line>
-      <line>
-        <item>7</item>
-        <item>JULI</item>
-      </line>
-      <line>
-        <item>8</item>
-        <item>AGUSTUS</item>
-      </line>
-      <line>
-        <item>9</item>
-        <item>SEPTEMBER</item>
-      </line>
-      <line>
-        <item>10</item>
-        <item>OKTOBER</item>
-      </line>
-      <line>
-        <item>11</item>
-        <item>NOVEMBER</item>
-      </line>
-      <line>
-        <item>12</item>
-        <item>DESEMBER</item>
-      </line>
-    </data>
     <cluster_schema />
     <remotesteps>
       <input>
@@ -930,13 +651,13 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>464</xloc>
+      <xloc>208</xloc>
       <yloc>48</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>gen sk</name>
+    <name>gabung nama</name>
     <type>ScriptValueMod</type>
     <description />
     <distribute>Y</distribute>
@@ -954,15 +675,15 @@
         <jsScript_name>Script 1</jsScript_name>
         <jsScript_script>//Script here
 
-var sk = (thn * 10000) + (bln * 100) + hari</jsScript_script>
+var name = first_name + ' ' + last_name</jsScript_script>
       </jsScript>
     </jsScripts>
     <fields>
       <field>
-        <name>sk</name>
-        <rename>sk</rename>
-        <type>Integer</type>
-        <length>10</length>
+        <name>name</name>
+        <rename>name</rename>
+        <type>String</type>
+        <length>-1</length>
         <precision>-1</precision>
         <replace>N</replace>
       </field>
@@ -975,8 +696,119 @@ var sk = (thn * 10000) + (bln * 100) + hari</jsScript_script>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>144</xloc>
-      <yloc>160</yloc>
+      <xloc>368</xloc>
+      <yloc>48</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>generate sk</name>
+    <type>Sequence</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <valuename>surrogate-key</valuename>
+    <use_database>N</use_database>
+    <connection>oltp-maria</connection>
+    <schema />
+    <seqname>SEQ_</seqname>
+    <use_counter>Y</use_counter>
+    <counter_name />
+    <start_at>1</start_at>
+    <increment_by>1</increment_by>
+    <max_value>999999999</max_value>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>496</xloc>
+      <yloc>48</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Insert / Update</name>
+    <type>InsertUpdate</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <connection>olap-postgres</connection>
+    <commit>100</commit>
+    <update_bypassed>N</update_bypassed>
+    <lookup>
+      <schema />
+      <table>dim_film</table>
+      <key>
+        <name>surrogate-key</name>
+        <field>sk</field>
+        <condition>=</condition>
+        <name2 />
+      </key>
+      <value>
+        <name>film_id</name>
+        <rename>film_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>judul</name>
+        <rename>title</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>thn_terbit</name>
+        <rename>release_year</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>durasi_pinjam</name>
+        <rename>rental_duration</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>rating</name>
+        <rename>rating</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>kategori</name>
+        <rename>kategori</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>nama_aktor</name>
+        <rename>name</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>sk</name>
+        <rename>surrogate-key</rename>
+        <update>Y</update>
+      </value>
+    </lookup>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>352</xloc>
+      <yloc>176</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
