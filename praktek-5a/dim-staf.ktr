@@ -640,6 +640,11 @@
         <rename>sk</rename>
         <update>Y</update>
       </value>
+      <value>
+        <name>store_id</name>
+        <rename>store_id</rename>
+        <update>Y</update>
+      </value>
     </lookup>
     <cluster_schema />
     <remotesteps>
@@ -717,6 +722,7 @@ nama = first_name + ' ' + last_name
 , last_name 
 , email
 , username
+, store_id
 FROM staff
 </sql>
     <limit>0</limit>

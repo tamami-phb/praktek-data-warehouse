@@ -1,0 +1,84 @@
+<Schema name="dwh-nw-c">
+  <Dimension type="TimeDimension" visible="true" name="dim-waktu">
+    <Hierarchy name="satu" visible="true" hasAll="true" allMemberName="allWaktu" primaryKey="id">
+      <Table name="dim_waktu" schema="uas" alias="">
+      </Table>
+      <Level name="tahun" visible="true" table="dim_waktu" column="tahun" type="Integer" uniqueMembers="false" levelType="TimeYears">
+      </Level>
+      <Level name="bulan" visible="true" table="dim_waktu" column="nama_bulan" type="String" uniqueMembers="false" levelType="TimeMonths">
+      </Level>
+      <Level name="tanggal" visible="true" table="dim_waktu" column="hari" type="Integer" uniqueMembers="false" levelType="TimeDays">
+      </Level>
+    </Hierarchy>
+  </Dimension>
+  <Dimension type="StandardDimension" visible="true" name="dim-produk">
+    <Hierarchy name="satu" visible="true" hasAll="true" allMemberName="allProduk" primaryKey="sk">
+      <Table name="dim_produk" schema="uas" alias="">
+      </Table>
+      <Level name="kategori" visible="true" table="dim_produk" column="kategori" type="String" uniqueMembers="false">
+      </Level>
+      <Level name="barang" visible="true" table="dim_produk" column="nama_produk" type="String" uniqueMembers="false">
+      </Level>
+    </Hierarchy>
+  </Dimension>
+  <Dimension type="StandardDimension" visible="true" name="dim-pelanggan">
+    <Hierarchy name="satu" visible="true" hasAll="true" allMemberName="allProduk" primaryKey="sk">
+      <Table name="dim_pelanggan" schema="uas" alias="">
+      </Table>
+      <Level name="propinsi" visible="true" table="dim_pelanggan" column="propinsi" type="String" uniqueMembers="false">
+      </Level>
+      <Level name="kota" visible="true" table="dim_pelanggan" column="kota" type="String" uniqueMembers="false">
+      </Level>
+      <Level name="perusahaan" visible="true" table="dim_pelanggan" column="nama_perusahaan" type="String" uniqueMembers="false">
+      </Level>
+    </Hierarchy>
+  </Dimension>
+  <Cube name="waktu-prod-cust" visible="true" cache="true" enabled="true">
+    <Table name="fakta-pemesanan" schema="uas" alias="">
+    </Table>
+    <DimensionUsage source="dim-waktu" name="dimensi-waktu" visible="true" foreignKey="tgl_bayar">
+    </DimensionUsage>
+    <DimensionUsage source="dim-produk" name="dimensi-produk" visible="true" foreignKey="dim_produk_sk">
+    </DimensionUsage>
+    <DimensionUsage source="dim-pelanggan" name="dimensi-customer" visible="true" foreignKey="dim_pelanggan_sk">
+    </DimensionUsage>
+    <Measure name="nilai" column="nilai" aggregator="sum" visible="true">
+    </Measure>
+    <Measure name="jml_data" column="id" aggregator="count" visible="true">
+    </Measure>
+    <Measure name="jml_trx" column="id_pesanan" aggregator="distinct-count" visible="true">
+    </Measure>
+  </Cube>
+  <Cube name="prod-waktu-cust" visible="true" cache="true" enabled="true">
+    <Table name="fakta-pemesanan" schema="uas" alias="">
+    </Table>
+    <DimensionUsage source="dim-produk" name="dimensi-produk" visible="true" foreignKey="dim_produk_sk">
+    </DimensionUsage>
+    <DimensionUsage source="dim-waktu" name="dimensi-waktu" visible="true" foreignKey="tgl_bayar">
+    </DimensionUsage>
+    <DimensionUsage source="dim-pelanggan" name="dimensi-pelanggan" visible="true" foreignKey="dim_pelanggan_sk">
+    </DimensionUsage>
+    <Measure name="nilai" column="nilai" aggregator="sum" visible="true">
+    </Measure>
+    <Measure name="jml_data" column="id" aggregator="count" visible="true">
+    </Measure>
+    <Measure name="jml-trx" column="id_pesanan" aggregator="distinct-count" visible="true">
+    </Measure>
+  </Cube>
+  <Cube name="cust-waktu-prod" visible="true" cache="true" enabled="true">
+    <Table name="fakta-pemesanan" schema="uas" alias="">
+    </Table>
+    <DimensionUsage source="dim-pelanggan" name="dimensi-pelanggan" visible="true" foreignKey="dim_pelanggan_sk">
+    </DimensionUsage>
+    <DimensionUsage source="dim-waktu" name="dimensi-waktu" visible="true" foreignKey="tgl_bayar">
+    </DimensionUsage>
+    <DimensionUsage source="dim-produk" name="dimensi-produk" visible="true" foreignKey="dim_produk_sk">
+    </DimensionUsage>
+    <Measure name="nilai" column="nilai" aggregator="sum" visible="true">
+    </Measure>
+    <Measure name="jml_data" column="id" aggregator="count" visible="true">
+    </Measure>
+    <Measure name="jml-trx" column="id_pesanan" aggregator="distinct-count" visible="true">
+    </Measure>
+  </Cube>
+</Schema>

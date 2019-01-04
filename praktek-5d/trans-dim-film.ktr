@@ -487,13 +487,13 @@
     </attributes>
   </connection>
   <connection>
-    <name>oltp-postgres</name>
+    <name>oltp-maria</name>
     <server>localhost</server>
-    <type>POSTGRESQL</type>
+    <type>MARIADB</type>
     <access>Native</access>
-    <database>oltp-kelas5c</database>
-    <port>5432</port>
-    <username>dev</username>
+    <database>sakila</database>
+    <port>3306</port>
+    <username>root</username>
     <password>Encrypted 2be98afc86aa7f2e4cb0baf78df81a6db</password>
     <servername />
     <data_tablespace />
@@ -513,7 +513,7 @@
       </attribute>
       <attribute>
         <code>PORT_NUMBER</code>
-        <attribute>5432</attribute>
+        <attribute>3306</attribute>
       </attribute>
       <attribute>
         <code>PRESERVE_RESERVED_WORD_CASE</code>
@@ -615,6 +615,11 @@
       <value>
         <name>kategori</name>
         <rename>name</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>bahasa</name>
+        <rename>name_1</rename>
         <update>Y</update>
       </value>
     </lookup>
@@ -721,7 +726,7 @@ var nama_aktor = first_name + ' ' + last_name</jsScript_script>
       <method>none</method>
       <schema_name />
     </partitioning>
-    <connection>oltp-postgres</connection>
+    <connection>oltp-maria</connection>
     <sql>SELECT 
   film.film_id,
   film.title,
@@ -730,7 +735,8 @@ var nama_aktor = first_name + ' ' + last_name</jsScript_script>
   film.rating,
   actor.first_name,
   actor.last_name, 
-  category.name
+  category.name,
+  language.name 
 FROM film
 join film_actor on (
   film_actor.film_id = film.film_id
@@ -743,6 +749,9 @@ join film_category on (
 )
 join category on (
   category.category_id = film_category.category_id
+)
+join language on (
+	language.language_id = film.language_id
 )
 </sql>
     <limit>0</limit>

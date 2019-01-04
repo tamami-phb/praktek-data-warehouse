@@ -1,62 +1,66 @@
 <Schema name="nilai-rental">
   <Dimension type="TimeDimension" visible="true" highCardinality="false" name="dim-waktu">
-    <Hierarchy name="New Hierarchy 0" visible="true" hasAll="true" allMemberName="allWaktu" primaryKey="sk">
+    <Hierarchy name="satu" visible="true" hasAll="true" allMemberName="allWaktu" primaryKey="sk">
       <Table name="dim_tanggal" schema="public">
       </Table>
-      <Level name="tahun" visible="true" table="dim_tanggal" column="tahun" type="Integer" uniqueMembers="false" levelType="TimeYears">
+      <Level name="tahun" visible="true" table="dim_tanggal" column="tahun" type="Integer" uniqueMembers="false" levelType="TimeYears" hideMemberIf="Never">
       </Level>
-      <Level name="bulan" visible="true" table="dim_tanggal" column="nama_bulan" type="String" internalType="String" uniqueMembers="false" levelType="TimeMonths">
+      <Level name="bulan" visible="true" table="dim_tanggal" column="nama_bulan" type="String" internalType="String" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
       </Level>
-      <Level name="tanggal" visible="true" table="dim_tanggal" column="hari" type="Integer" uniqueMembers="false" levelType="TimeDays">
-      </Level>
-    </Hierarchy>
-  </Dimension>
-  <Dimension type="StandardDimension" visible="true" name="dim-film">
-    <Hierarchy name="New Hierarchy 0" visible="true" hasAll="true" primaryKey="sk">
-      <Table name="dim_film" schema="public" alias="">
-      </Table>
-      <Level name="kategori" visible="true" table="dim_film" column="kategori" type="String" uniqueMembers="false">
-      </Level>
-      <Level name="rating" visible="true" table="dim_film" column="rating" type="String" uniqueMembers="false">
-      </Level>
-      <Level name="judul" visible="true" table="dim_film" column="judul" type="String" uniqueMembers="false">
+      <Level name="tanggal" visible="true" table="dim_tanggal" column="hari" type="Integer" uniqueMembers="false" levelType="TimeDays" hideMemberIf="Never">
       </Level>
     </Hierarchy>
   </Dimension>
-  <Dimension type="StandardDimension" visible="true" name="dim-pelanggan">
-    <Hierarchy name="New Hierarchy 0" visible="true" hasAll="true" allMemberName="allPelanggan" primaryKey="sk">
-      <Table name="dim_pelanggan" schema="public" alias="">
+  <Dimension type="StandardDimension" visible="true" highCardinality="false" name="dim-film">
+    <Hierarchy name="satu" visible="true" hasAll="true" allMemberName="allFilm" primaryKey="sk">
+      <Table name="dim_film" schema="public">
       </Table>
-      <Level name="negara" visible="true" table="dim_pelanggan" column="negara" type="String" uniqueMembers="false">
+      <Level name="kategori" visible="true" table="dim_film" column="kategori" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
       </Level>
-      <Level name="level-propinsi" visible="true" table="dim_pelanggan" column="kecamatan" type="String" uniqueMembers="false">
+      <Level name="rating" visible="true" table="dim_film" column="rating" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
       </Level>
-      <Level name="kota" visible="true" table="dim_pelanggan" column="kota" type="String" uniqueMembers="false">
-      </Level>
-      <Level name="nama pelanggan" visible="true" table="dim_pelanggan" column="nama" type="String" uniqueMembers="false">
+      <Level name="judul" visible="true" table="dim_film" column="judul" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
       </Level>
     </Hierarchy>
   </Dimension>
-  <Dimension type="StandardDimension" visible="true" name="dim-staf">
-    <Hierarchy name="New Hierarchy 0" visible="true" hasAll="true">
-      <Table name="dim_staf" schema="public" alias="">
+  <Dimension type="StandardDimension" visible="true" highCardinality="false" name="dim-pelanggan">
+    <Hierarchy name="satu" visible="true" hasAll="true" allMemberName="allPelanggan" primaryKey="sk">
+      <Table name="dim_pelanggan" schema="public">
       </Table>
-      <Level name="nama-staf" visible="true" table="dim_staf" column="nama" type="String" uniqueMembers="false">
+      <Level name="negara" visible="true" table="dim_pelanggan" column="negara" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+      </Level>
+      <Level name="level-propinsi" visible="true" table="dim_pelanggan" column="kecamatan" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+      </Level>
+      <Level name="kota" visible="true" table="dim_pelanggan" column="kota" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+      </Level>
+      <Level name="nama pelanggan" visible="true" table="dim_pelanggan" column="nama" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+      </Level>
+    </Hierarchy>
+  </Dimension>
+  <Dimension type="StandardDimension" visible="true" highCardinality="false" name="dim-staf">
+    <Hierarchy name="satu" visible="true" hasAll="true" allMemberName="allStaf">
+      <Table name="dim_staf" schema="public">
+      </Table>
+      <Level name="nama-staf" visible="true" table="dim_staf" column="nama" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
       </Level>
     </Hierarchy>
   </Dimension>
   <Cube name="FaktaPembayaran" visible="true" cache="true" enabled="true">
-    <Table name="fakta-pembayaran" schema="public" alias="">
+    <Table name="fakta-pembayaran" schema="public">
     </Table>
-    <DimensionUsage source="dim-waktu" name="dimensi-waktu" visible="true" foreignKey="tgl_bayar">
+    <DimensionUsage source="dim-waktu" name="dimensi-waktu" visible="true" foreignKey="tgl_bayar" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="dim-pelanggan" name="dimensi-pelanggan" visible="true" foreignKey="dim_pelanggan_sk" highCardinality="false">
     </DimensionUsage>
     <DimensionUsage source="dim-film" name="dimensi-film" visible="true" foreignKey="dim_film_sk">
-    </DimensionUsage>
-    <DimensionUsage source="dim-pelanggan" name="dimensi-pelanggan" visible="true" foreignKey="dim_pelanggan_sk">
     </DimensionUsage>
     <DimensionUsage source="dim-staf" name="dimensi-staf" visible="true" foreignKey="dim_staf_sk">
     </DimensionUsage>
     <Measure name="nilai" column="nilai" datatype="Numeric" aggregator="sum" visible="true">
     </Measure>
+    <Measure name="jumlah" column="tgl_bayar" aggregator="count" visible="true">
+    </Measure>
+  </Cube>
+  <Cube name="New Cube 1" visible="true" cache="true" enabled="true">
   </Cube>
 </Schema>
